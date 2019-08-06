@@ -1,0 +1,9 @@
+FROM ubi8
+
+USER root
+
+WORKDIR /opt
+
+RUN yum install -y dnf-utils \
+    && yum-config-manager --enable rhel-8-for-x86_64-baseos-rpms codeready-builder-for-rhel-8-x86_64-rpms \
+    && yum install -y git diffutils make byacc cracklib-dicts libpwquality autoconf automake libtool bison flex sed cracklib-devel perl-interpreter pkgconfig gettext-devel libtirpc-devel libnsl2-devel audit-libs-devel audit-libs libselinux-devel libselinux glibc libxcrypt-devel libdb-devel linuxdoc-tools elinks libxslt docbook-style-xsl docbook-dtds

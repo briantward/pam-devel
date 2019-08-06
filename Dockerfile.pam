@@ -1,0 +1,14 @@
+FROM pam-base
+
+USER root
+
+WORKDIR /opt
+
+RUN git clone https://github.com/linux-pam/linux-pam && cd linux-pam/ \
+    && git clone --branch faillock-conf https://github.com/briantward/pam-redhat && cd pam-redhat \
+    && cp -a pam_faillock ../modules && cd ../ \
+    && sed -i 's/pam_tty_audit pam_umask \\/pam_tty_audit pam_umask pam_faillock \\/g' ./modules/Makefile.am \
+    && sed -i 's/modules\/pam_umask\/Makefile \\/modules\/pam_umask\/Makefile modules\/pam_faillock\/Makefile \\/g' ./configure.ac \
+    && ./autogen.sh \
+    && ./configure  \
+    && make

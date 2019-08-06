@@ -1,0 +1,17 @@
+FROM rhscl/devtoolset-8-toolchain-rhel7
+
+USER root
+
+RUN yum-config-manager --enable rhel-7-server-optional-rpms && \ 
+    yum install -y git make byacc cracklib-dicts libpwquality autoconf automake libtool bison flex sed cracklib-devel perl-interpreter pkgconfig gettext-devel libtirpc-devel libnsl2-devel audit-libs-devel audit-libs libselinux-devel libselinux glibc libxcrypt-devel libdb-devel linuxdoc-tools elinks libxslt docbook-style-xsl docbook-dtds && \
+    git clone https://github.com/linux-pam/linux-pam && cd linux-pam/ && \
+    git clone --branch faillock-conf https://github.com/briantward/pam-redhat && cd pam-redhat && \
+    cp -a pam_faillock ../modules && cd ../ &&\
+    sed -i 's/pam_tty_audit pam_umask \\/pam_tty_audit pam_umask pam_faillock \\/g' ./modules/Makefile.am && \
+    sed -i 's/modules\/pam_umask\/Makefile \\/modules\/pam_umask\/Makefile modules\/pam_faillock\/Makefile \\/g' ./configure.ac && \
+    ./autogen.sh && \
+    ./configure && \
+    cd linux-pam/libpam && \
+    make && \ 
+    cd ../modules/pam_faillock && \
+    make
